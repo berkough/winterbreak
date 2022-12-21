@@ -26,7 +26,9 @@ function preload(){
 }
 
 function create(){
-  this.add.image(640,360,'bg');
+  this.cameras.main.setBounds(0,0,12800,7200);
+
+  let bg = this.add.image(640,360,'bg');
   player = this.physics.add.image(640,360,'ship');
   player.setDamping(true);
   player.setDrag(0.99);
@@ -34,30 +36,36 @@ function create(){
 
   cursors = this.input.keyboard.createCursorKeys();
 
+  const controlConfig = {
+    camera: this.cameras.main,
+    left: cursors.left,
+    right: cursors.right,
+    up: cursors.up,
+    down: cursors.down,
+    acceleration: 0.06,
+    drag: 0.0005,
+    maxSpeed: 1.0
+  };
+
+  this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
+
 }
 
-function update(){
-  console.log(player.rotation);
+function update(time,delta){
 
-  if (cursors.up.isDown)
-  {
+  this.controls.update(delta);
+
+  if (cursors.up.isDown){
       this.physics.velocityFromRotation(player.rotation, 200, player.body.acceleration);
-  }
-  else
-  {
+  } else {
       player.setAcceleration(0);
   }
 
-  if (cursors.left.isDown)
-  {
+  if (cursors.left.isDown){
       player.setAngularVelocity(-150);
-  }
-  else if (cursors.right.isDown)
-  {
+  } else if (cursors.right.isDown){
       player.setAngularVelocity(150);
-  }
-  else
-  {
+  } else {
       player.setAngularVelocity(0);
   }
 }
