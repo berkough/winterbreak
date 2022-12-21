@@ -26,35 +26,21 @@ function preload(){
 }
 
 function create(){
-  this.cameras.main.setBounds(0,0,12800,7200);
-
   let bg = this.add.image(640,360,'bg');
   player = this.physics.add.image(640,360,'ship');
   player.setDamping(true);
   player.setDrag(0.99);
   player.setMaxVelocity(200);
 
+  let camera = this.cameras.main;
+  camera.startFollow(player);
+  camera.setDeadzone(64,64);
+  camera.setBounds(0,0,12800,7200);
+
   cursors = this.input.keyboard.createCursorKeys();
-
-  const controlConfig = {
-    camera: this.cameras.main,
-    left: cursors.left,
-    right: cursors.right,
-    up: cursors.up,
-    down: cursors.down,
-    acceleration: 0.06,
-    drag: 0.0005,
-    maxSpeed: 1.0
-  };
-
-  this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
-
 }
 
-function update(time,delta){
-
-  this.controls.update(delta);
-
+function update(){
   if (cursors.up.isDown){
       this.physics.velocityFromRotation(player.rotation, 200, player.body.acceleration);
   } else {
