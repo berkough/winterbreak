@@ -40,11 +40,8 @@ function create(){
   player.setDamping(true);
   player.setDrag(0.99);
   player.setMaxVelocity(200);
-  
-  //player.body.setSize(player.width * 0.25, player.height * 0.25);
 
-
-
+  //Creating animations from frames
   this.anims.create({
     key: 'forward',
     frames: this.anims.generateFrameNumbers('ship', { start: 0, end: 11 }),
@@ -58,13 +55,6 @@ function create(){
     frameRate: 10,
     repeat: -1
   });
-  
- // function stopAnimation() {
- //   player.anims.stop();
-  //}
-
-  //player.on('animationcomplete', stopAnimation);
-
 
   let camera = this.cameras.main;
   // Set the camera to follow the image
@@ -85,19 +75,18 @@ function create(){
 
 
 
-
-
 function update() {
   console.log(player.rotation);
 
   // Check if the up arrow is being pressed
   if (cursors.up.isDown) {
-    // Play the 'walk' animation
+    // Play the 'forward' animation
     player.anims.play('forward', true);
 
     this.physics.velocityFromRotation(player.rotation, 200, player.body.acceleration);
   }
   else {
+    //play the 'idle'animation if up isnt being pressed and reduce acceleration
     player.anims.play('idle', true, 0);
     player.setAcceleration(0);
   }
