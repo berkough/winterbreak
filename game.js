@@ -6,7 +6,7 @@ const config = {
     default: 'arcade',
     arcade: {
       fps: 60,
-      gravity: {x:0}
+      gravity: { x: 0 }
     }
   },
   scene: {
@@ -15,32 +15,35 @@ const config = {
     update: update
   }
 };
+//Flag variable for idle animation
+let idleAnimationIsPlaying = false;
 
 let player;
 
 const game = new Phaser.Game(config);
 
-
-
-function preload(){
- // this.load.image('ship','assets/Starship_1.gif');
+function preload() {
+  // this.load.image('ship','assets/Starship_1.gif');
   this.load.image('bg', 'assets/bg.png');
-  
-
-
+  this.load.image('Default', 'assets/Ship Start.png');
   // Load the player sprite's animation frames
   this.load.spritesheet('ship', 'assets/Ship sprite sheet.png', { frameWidth: 128, frameHeight: 128 });
   this.load.spritesheet('idle', 'assets/Ship_idle_spritesheet.png', { frameWidth: 128, frameHeight: 128 });
+  this.load.audio('Game Music', 'Audio/Game Music.mp3');
 }
 
 
-function create(){
-  let bg = this.add.image(640,360,'bg');
-  player = this.physics.add.sprite(640,360,'ship');
+
+function create() {
+  let bg = this.add.image(640, 360, 'bg');
+  player = this.physics.add.sprite(640, 360, 'Default');
   player.setDamping(true);
   player.setDrag(0.99);
   player.setMaxVelocity(200);
 
+//Added music to game
+  let gameMusic = this.sound.add('Game Music');
+  gameMusic.play('', 0, 1, true);
   //Creating animations from frames
   this.anims.create({
     key: 'forward',
@@ -48,12 +51,14 @@ function create(){
     frameRate: 20,
     repeat: 0
   });
-  
+
   this.anims.create({
     key: 'idle',
-    frames: this.anims.generateFrameNumbers('idle', { start: 2, end: 4}),
+    frames: this.anims.generateFrameNumbers('idle', {
+      frames: [0, 1, 2, 3, 4]
+    }),
     frameRate: 10,
-    repeat: -1
+    repeat: 0
   });
 
   let camera = this.cameras.main;
@@ -65,7 +70,6 @@ function create(){
 
   // Set the bounds of the camera to the size of the game world, so that it doesn't go out of bounds
   this.cameras.main.setBounds(0, 0, 12800, 7200);
-  
 
   cursors = this.input.keyboard.createCursorKeys();
 
@@ -73,26 +77,28 @@ function create(){
 
 }
 
-
-
 function update() {
   console.log(player.rotation);
 
   // Check if the up arrow is being pressed
   if (cursors.up.isDown) {
+    
+    idleAnimationIsPlaying = true;
     // Play the 'forward' animation
     player.anims.play('forward', true);
 
     this.physics.velocityFromRotation(player.rotation, 200, player.body.acceleration);
-  }
-  else {
+  } else {
     //play the 'idle'animation if up isnt being pressed and reduce acceleration
-    player.anims.play('idle', true, 0);
     player.setAcceleration(0);
+    //player.anims.play('idle', true);
   }
-
- 
-
+  //Play idle animation when idling and stop on last frame
+  if (idleAnimationIsPlaying == true && !cursors.up.isDown) {
+    idleAnimationIsPlaying = false;
+    player.anims.play('idle', true);
+  }
+    
   if (cursors.left.isDown) {
     player.setAngularVelocity(-150);
   }
