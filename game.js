@@ -40,6 +40,8 @@ function create() {
   player.setDamping(true);
   player.setDrag(0.99);
   player.setMaxVelocity(200);
+  this.physics.world.bounds.width = 12800;
+  this.physics.world.bounds.height = 7200;
 
 //Added music to game
   let gameMusic = this.sound.add('Game Music');
